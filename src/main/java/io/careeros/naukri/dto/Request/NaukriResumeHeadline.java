@@ -1,4 +1,4 @@
-package io.careeros.careeros.dto.Request;
+package io.careeros.naukri.dto.Request;
 
 import lombok.Data;
 

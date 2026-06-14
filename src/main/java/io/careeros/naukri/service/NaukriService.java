@@ -1,8 +1,8 @@
-package io.careeros.careeros.service;
+package io.careeros.naukri.service;
 
-import io.careeros.careeros.dto.Request.NaukriResumeHeadline;
-import io.careeros.careeros.model.NaukriProfileDetail;
-import io.careeros.careeros.repository.NaukriProfileUpdateRepository;
+import io.careeros.naukri.dto.Request.NaukriResumeHeadline;
+import io.careeros.naukri.model.NaukriProfileDetail;
+import io.careeros.naukri.repository.NaukriProfileUpdateRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -1,6 +1,6 @@
-package io.careeros.careeros.repository;
+package io.careeros.naukri.repository;
 
-import io.careeros.careeros.model.NaukriProfileDetail;
+import io.careeros.naukri.model.NaukriProfileDetail;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,4 +1,4 @@
-package io.careeros.careeros.scheduler;
+package io.careeros.naukri.scheduler;
 
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;

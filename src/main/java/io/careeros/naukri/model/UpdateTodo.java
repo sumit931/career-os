@@ -1,4 +1,4 @@
-package io.careeros.careeros.model;
+package io.careeros.naukri.model;
 
 import lombok.Data;
 

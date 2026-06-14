@@ -1,8 +1,8 @@
-package io.careeros.careeros.controller;
+package io.careeros.naukri.controller;
 
-import io.careeros.careeros.model.Todo;
-import io.careeros.careeros.model.UpdateTodo;
-import io.careeros.careeros.service.TodoService;
+import io.careeros.naukri.model.Todo;
+import io.careeros.naukri.model.UpdateTodo;
+import io.careeros.naukri.service.TodoService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

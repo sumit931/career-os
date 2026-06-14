@@ -1,4 +1,4 @@
-package io.careeros.careeros;
+package io.careeros.naukri;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -1,7 +1,7 @@
-package io.careeros.careeros.service;
+package io.careeros.naukri.service;
 
-import io.careeros.careeros.model.Todo;
-import io.careeros.careeros.model.UpdateTodo;
+import io.careeros.naukri.model.Todo;
+import io.careeros.naukri.model.UpdateTodo;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
