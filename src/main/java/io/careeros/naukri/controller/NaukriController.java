@@ -7,6 +7,8 @@ import io.careeros.naukri.service.NaukriService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -18,6 +20,16 @@ public class NaukriController {
     @PostMapping
     public NaukriProfileDetail profileDetails(@RequestBody NaukriResumeHeadline naukriResumeHeadline){
         return naukriService.createSubscription(naukriResumeHeadline);
+    }
+
+    @GetMapping
+    public List<NaukriProfileDetail> allProfiles(){
+        return naukriService.getAllSubscription();
+    }
+
+    @PatchMapping("/{id}")
+    public NaukriProfileDetail profileDetail(@PathVariable Long id,@RequestBody NaukriResumeHeadline naukriResumeHeadline){
+        return naukriService.updateSubscriptionDetail(id,naukriResumeHeadline);
     }
 
 //    @GetMapping

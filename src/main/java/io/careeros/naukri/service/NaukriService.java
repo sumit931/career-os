@@ -30,4 +30,18 @@ public class NaukriService {
         return allSubscription;
     }
 
+    public NaukriProfileDetail updateSubscriptionDetail(Long id, NaukriResumeHeadline naukriResumeHeadline){
+        NaukriProfileDetail naukriProfileDetail = naukriProfileUpdateRepository.findById(id).orElseThrow(()-> new RuntimeException("Profile not found by id: "+id));
+
+        if(naukriResumeHeadline.getHeadline1()!=null){
+            naukriProfileDetail.setHeadline1(naukriResumeHeadline.getHeadline1());
+        }
+
+        if(naukriResumeHeadline.getHeadline2()!= null){
+            naukriProfileDetail.setHeadline2(naukriResumeHeadline.getHeadline2());
+        }
+        naukriProfileUpdateRepository.save(naukriProfileDetail);
+        return naukriProfileDetail;
+    }
+
 }
