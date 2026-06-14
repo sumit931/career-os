@@ -1,7 +1,7 @@
-package io.sumitnegi.careeros.service;
+package io.careeros.careeros.service;
 
-import io.sumitnegi.careeros.model.Todo;
-import io.sumitnegi.careeros.model.UpdateTodo;
+import io.careeros.careeros.model.Todo;
+import io.careeros.careeros.model.UpdateTodo;
 import org.springframework.stereotype.Service;
 
 import java.util.*;

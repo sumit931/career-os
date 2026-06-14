@@ -1,4 +1,4 @@
-package io.sumitnegi.careeros.automation;
+package io.careeros.careeros.automation;
 
 import com.microsoft.playwright.*;
 import org.springframework.stereotype.Component;

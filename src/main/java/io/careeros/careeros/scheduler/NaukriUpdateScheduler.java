@@ -1,6 +1,5 @@
-package io.sumitnegi.careeros.scheduler;
+package io.careeros.careeros.scheduler;
 
-import io.sumitnegi.careeros.automation.NaukriPlaywrightClient;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 

@@ -1,4 +1,4 @@
-package io.sumitnegi.careeros.model;
+package io.careeros.careeros.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

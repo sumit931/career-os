@@ -1,9 +1,9 @@
-package io.sumitnegi.careeros.controller;
+package io.careeros.careeros.controller;
 
 
-import io.sumitnegi.careeros.dto.Request.NaukriResumeHeadline;
-import io.sumitnegi.careeros.model.NaukriProfileDetail;
-import io.sumitnegi.careeros.service.NaukriService;
+import io.careeros.careeros.dto.Request.NaukriResumeHeadline;
+import io.careeros.careeros.model.NaukriProfileDetail;
+import io.careeros.careeros.service.NaukriService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

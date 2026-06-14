@@ -1,4 +1,4 @@
-package io.sumitnegi.careeros;
+package io.careeros.careeros;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

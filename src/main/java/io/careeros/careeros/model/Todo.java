@@ -1,4 +1,4 @@
-package io.sumitnegi.careeros.model;
+package io.careeros.careeros.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
