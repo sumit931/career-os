@@ -1,5 +1,6 @@
 package io.careeros.naukri.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -14,6 +15,7 @@ public class NaukriProfileDetail {
     private Long id;
     private String headline1;
     private String headline2;
+    @Column(unique = true)
     private String email;
     private String password;
     private Boolean changeHeadline;

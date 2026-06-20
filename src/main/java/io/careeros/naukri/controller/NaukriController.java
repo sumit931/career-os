@@ -1,13 +1,17 @@
 package io.careeros.naukri.controller;
 
-
-import io.careeros.naukri.dto.Request.NaukriResumeHeadline;
+import com.sun.net.httpserver.Authenticator;
+import io.careeros.naukri.dto.Request.CreateNaukriRequest;
+import io.careeros.naukri.dto.Request.UpdateNaukriRequest;
 import io.careeros.naukri.model.NaukriProfileDetail;
 import io.careeros.naukri.service.NaukriService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @RestController
@@ -18,8 +22,8 @@ public class NaukriController {
     private final NaukriService naukriService;
 
     @PostMapping
-    public NaukriProfileDetail profileDetails(@RequestBody NaukriResumeHeadline naukriResumeHeadline){
-        return naukriService.createSubscription(naukriResumeHeadline);
+    public NaukriProfileDetail profileDetails(@Valid @RequestBody CreateNaukriRequest request){
+        return naukriService.createSubscription(request);
     }
 
     @GetMapping
@@ -28,10 +32,19 @@ public class NaukriController {
     }
 
     @PatchMapping("/{id}")
-    public NaukriProfileDetail profileDetail(@PathVariable Long id,@RequestBody NaukriResumeHeadline naukriResumeHeadline){
-        return naukriService.updateSubscriptionDetail(id,naukriResumeHeadline);
+    public NaukriProfileDetail profileDetail(@PathVariable Long id, @RequestBody UpdateNaukriRequest request){
+        return naukriService.updateSubscriptionDetail(id, request);
     }
 
-//    @GetMapping
-//    public List<>
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteProfile(@PathVariable Long id){
+        naukriService.deleteSubscription(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/trigger")
+    public void TriggerUpdateFlow(){
+        naukriService.triggerUpdateFlow();
+    }
+
 }
