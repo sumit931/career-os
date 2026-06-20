@@ -2,6 +2,7 @@ package io.careeros.coldemailer.exception;
 
 import io.careeros.auth.oauth.exception.InvalidIdTokenException;
 import io.careeros.coldemailer.exception.CampaignNotFoundException;
+import io.careeros.coldemailer.exception.FollowupGenerationException;
 import java.time.Instant;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
@@ -25,6 +26,11 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(InvalidIdTokenException.class)
   public ResponseEntity<Map<String, Object>> handleInvalidIdToken(InvalidIdTokenException ex) {
     return error(HttpStatus.BAD_REQUEST, ex.getMessage());
+  }
+
+  @ExceptionHandler(FollowupGenerationException.class)
+  public ResponseEntity<Map<String, Object>> handleFollowupGeneration(FollowupGenerationException ex) {
+    return error(HttpStatus.BAD_GATEWAY, ex.getMessage());
   }
 
   @ExceptionHandler(EncryptionException.class)

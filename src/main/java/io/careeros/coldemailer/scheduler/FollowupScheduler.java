@@ -3,7 +3,9 @@ package io.careeros.coldemailer.scheduler;
 import io.careeros.auth.oauth.service.GoogleOAuthService;
 import io.careeros.coldemailer.entity.Campaign;
 import io.careeros.coldemailer.entity.Followup;
+import io.careeros.coldemailer.enums.CampaignStatus;
 import io.careeros.coldemailer.enums.FollowupStatus;
+import io.careeros.coldemailer.repository.CampaignRepository;
 import io.careeros.coldemailer.repository.FollowupRepository;
 import io.careeros.coldemailer.service.EncryptionService;
 import io.careeros.coldemailer.service.GmailService;
@@ -20,7 +22,10 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class FollowupScheduler {
 
+  private static final List<FollowupStatus> INCOMPLETE_STATUSES = List.of(FollowupStatus.PENDING, FollowupStatus.PROCESSING);
+
   private final FollowupRepository followupRepository;
+  private final CampaignRepository campaignRepository;
   private final EncryptionService encryptionService;
   private final GoogleOAuthService googleOAuthService;
   private final GmailService gmailService;
@@ -40,6 +45,7 @@ public class FollowupScheduler {
     }
   }
 
+  @Transactional
   private void sendFollowup(Followup followup) {
     Campaign campaign = followup.getCampaign();
     try {
@@ -63,5 +69,15 @@ public class FollowupScheduler {
       log.error("Failed to send follow-up #{} for campaign {}: {}", followup.getSequenceNumber(), campaign.getId(), e.getMessage());
     }
     followupRepository.save(followup);
+    completeCampaignIfDone(campaign);
+  }
+
+  private void completeCampaignIfDone(Campaign campaign) {
+    boolean hasIncomplete = followupRepository.existsByCampaignIdAndStatusIn(campaign.getId(), INCOMPLETE_STATUSES);
+    if (!hasIncomplete) {
+      campaign.setStatus(CampaignStatus.COMPLETED);
+      campaignRepository.save(campaign);
+      log.info("Campaign {} marked COMPLETED", campaign.getId());
+    }
   }
 }

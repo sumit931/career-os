@@ -9,13 +9,13 @@ public class CampaignMapper {
 
   private CampaignMapper() {}
 
-  public static Campaign toEntity(CreateCampaignRequest request, User user, String gmailThreadId, String rootMessageId) {
+  public static Campaign toEntity(CreateCampaignRequest request, User user, String gmailThreadId, String rootMessageId, CampaignStatus status) {
     Campaign campaign = new Campaign();
     campaign.setUser(user);
     campaign.setRecipientEmail(request.recipientEmail());
     campaign.setSubject(request.subject());
     campaign.setInitialBody(request.initialBody());
-    campaign.setStatus(CampaignStatus.ACTIVE);
+    campaign.setStatus(status);
     campaign.setGmailThreadId(gmailThreadId);
     campaign.setRootMessageId(rootMessageId);
     return campaign;

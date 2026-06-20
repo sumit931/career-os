@@ -45,20 +45,29 @@ public class GeminiService {
 
   private GeminiRequest buildRequest(String subject, String initialBody, int count) {
     String prompt = """
-        You are an email assistant helping with cold email outreach.
-        Based on the following initial cold email, generate %d follow-up emails.
-        Rules:
-        - Each follow-up should be progressively shorter and more direct
-        - Maintain a professional but friendly tone
-        - Reference the initial email subtly without being repetitive
-        - Each follow-up should have a slightly different angle
+        You are a senior professional writing follow-up emails after a cold outreach. Your goal is to write
+        follow-ups that feel genuinely human — not templated, not robotic — and convey authentic urgency
+        without being pushy or desperate.
 
         Initial email subject: %s
         Initial email body:
         %s
 
-        Return ONLY a JSON array of %d strings, where each string is the body of a follow-up email.
-        """.formatted(count, subject, initialBody, count);
+        Generate exactly %d follow-up email bodies with these rules:
+        - Write in first person, as if a real person is following up naturally
+        - Each email must be short (3-5 sentences max) — busy people don't read long emails
+        - Show honest, genuine interest in connecting — not urgency or desperation. The tone should feel
+          like someone who genuinely cares about the opportunity and is reaching out because they mean it,
+          not because they are chasing a response
+        - Each follow-up should approach from a slightly different angle (value reminder, specific question,
+          offer to help, acknowledge they're busy)
+        - Never use filler phrases like "I hope this email finds you well", "Just checking in",
+          "Touching base", "Circle back", or "Per my last email"
+        - No subject line — body only
+        - Sound like a human, not an AI
+
+        Return ONLY a JSON array of exactly %d strings, each string being the plain-text body of one follow-up email.
+        """.formatted(subject, initialBody, count, count);
 
     return new GeminiRequest(
         List.of(new Content(List.of(new Part(prompt)))),
