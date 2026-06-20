@@ -43,9 +43,10 @@ public class CampaignService {
     GmailSendResponse emailResponse = gmailService.sendEmail(
         accessToken, user.getEmail(), request.recipientEmail(), request.subject(), request.initialBody()
     );
+    String rfc2822MessageId = gmailService.fetchRfc2822MessageId(accessToken, emailResponse.id());
 
     Campaign saved = campaignRepository.save(
-        CampaignMapper.toEntity(request, user, emailResponse.threadId(), emailResponse.id())
+        CampaignMapper.toEntity(request, user, emailResponse.threadId(), rfc2822MessageId)
     );
 
     List<FollowupResponse> followups = followupService.save(
