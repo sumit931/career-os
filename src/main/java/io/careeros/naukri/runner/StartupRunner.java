@@ -1,6 +1,6 @@
-//package io.sumitnegi.careeros.runner;
+//package io.careeros.naukri.runner;
 //
-//import io.sumitnegi.careeros.automation.NaukriPlaywrightClient;
+//import io.careeros.naukri.automation.NaukriPlaywrightClient;
 //import lombok.RequiredArgsConstructor;
 //import org.springframework.boot.CommandLineRunner;
 //import org.springframework.stereotype.Component;

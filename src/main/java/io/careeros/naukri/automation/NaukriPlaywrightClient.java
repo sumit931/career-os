@@ -1,103 +1,114 @@
 package io.careeros.naukri.automation;
 
 import com.microsoft.playwright.*;
+import com.microsoft.playwright.options.LoadState;
+import io.careeros.naukri.model.NaukriProfileDetail;
+import io.careeros.naukri.repository.NaukriProfileUpdateRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
+@Slf4j
+@RequiredArgsConstructor
 @Component
 public class NaukriPlaywrightClient {
 
+    private final NaukriProfileUpdateRepository naukriProfileUpdateRepository;
+
+    public void processBrowser(Browser browser, String email, String password, String resumeHeadline) {
+
+        log.info("Browser launched, creating new page");
+        Page page = browser.newPage();
+
+        try {
+            page.navigate("https://www.naukri.com");
+            page.locator("#login_Layer").waitFor();
+
+            log.info("Navigated to Naukri — URL: {}, Title: {}", page.url(), page.title());
+
+            page.locator("#login_Layer").click();
+            log.debug("Login button clicked");
+
+            page.locator("input[placeholder='Enter your active Email ID / Username']").waitFor();
+            page.locator("input[placeholder='Enter your active Email ID / Username']").fill(email);
+            page.locator("input[placeholder='Enter your password']").fill(password);
+            log.debug("Credentials filled");
+
+            page.locator(".loginButton").click();
+            page.waitForLoadState(LoadState.DOMCONTENTLOADED);
+            log.info("Logged in successfully");
+
+            page.navigate("https://www.naukri.com/mnjuser/profile");
+            page.locator("#lazyResumeHead").waitFor();
+            log.debug("Profile page loaded, lazyResumeHead count: {}", page.locator("#lazyResumeHead").count());
+
+            page.locator("#lazyResumeHead").locator("text=editOneTheme").click();
+
+            Locator headline = page.locator("#resumeHeadlineTxt");
+            headline.waitFor();
+            log.debug("Headline textarea — visible: {}, enabled: {}", headline.isVisible(), headline.isEnabled());
+
+            headline.fill(resumeHeadline);
+
+            page.locator("button.btn-dark-ot[type='submit']").click();
+            page.waitForLoadState(LoadState.DOMCONTENTLOADED);
+            log.info("Resume headline updated");
+
+            page.navigate("https://www.naukri.com/mnjuser/profile");
+            page.locator(".nI-gNb-drawer__icon").waitFor();
+
+            page.locator(".nI-gNb-drawer__icon").click();
+            page.getByText("Logout").waitFor();
+            page.getByText("Logout").click();
+            page.waitForLoadState(LoadState.DOMCONTENTLOADED);
+            log.info("Logged out successfully");
+        } catch (Exception e) {
+            log.error("Automation failed for email: {} — cleaning up page", email, e);
+        } finally {
+            page.close();
+        }
+    }
+
+
     public void launchBrowser() {
-        System.out.println("1. Starting Playwright");
+        log.info("Starting Playwright");
 
         try (Playwright playwright = Playwright.create()) {
 
-            System.out.println("2. Creating browser");
-
+            log.info("Launching browser");
             Browser browser = playwright.chromium()
                     .launch(new BrowserType.LaunchOptions()
                             .setHeadless(false)
                             .setSlowMo(1000));
 
-            System.out.println("3. Browser launched");
+            List<NaukriProfileDetail> details = naukriProfileUpdateRepository.findAll();
+            for (NaukriProfileDetail profileDetail : details) {
+                String email = profileDetail.getEmail();
+                String password = profileDetail.getPassword();
+                String resumeHeadline;
+                if (profileDetail.getChangeHeadline()) {
+                    profileDetail.setChangeHeadline(false);
+                    resumeHeadline = profileDetail.getHeadline1();
+                } else {
+                    profileDetail.setChangeHeadline(true);
+                    resumeHeadline = profileDetail.getHeadline2();
+                }
+                try {
+                    processBrowser(browser, email, password, resumeHeadline);
+                } catch (Exception e) {
+                    log.error("Skipping profile {} due to error", email, e);
+                }
+                naukriProfileUpdateRepository.save(profileDetail);
+            }
 
-            Page page = browser.newPage();
-
-            System.out.println("4. New page created");
-
-            page.navigate("https://www.naukri.com");
-
-            System.out.println("5. Navigated to Naukri");
-            System.out.println("Current URL = " + page.url());
-            System.out.println("Page Title = " + page.title());
-
-            Thread.sleep(2000);
-
-            System.out.println("6. Trying to click login button");
-
-            page.locator("#login_Layer").click();
-
-            System.out.println("7. Login button clicked");
-
-            System.out.println("8. Filling email");
-
-            page.locator("input[placeholder='Enter your active Email ID / Username']")
-                    .fill("sumitnegi9667@gmail.com");
-
-            System.out.println("9. Email filled");
-
-            System.out.println("10. Filling password");
-
-
-            page.locator("input[placeholder='Enter your password']")
-                    .fill("@Swarup007");
-
-            System.out.println("11. Password filled");
-
-
-
-            page.locator(".loginButton").click();
-
-            Thread.sleep(2000);
-
-            page.navigate("https://www.naukri.com/mnjuser/profile");
-
-            Thread.sleep(2000);
-
-            System.out.println(
-                    page.locator("#lazyResumeHead").count()
-            );
-
-            page.locator("#lazyResumeHead").locator("text=editOneTheme").click();
-
-            Thread.sleep(2000);
-
-            // Fill textarea
-
-            Locator headline = page.locator("#resumeHeadlineTxt");
-
-            System.out.println("Count = " + headline.count());
-            System.out.println("Visible = " + headline.isVisible());
-            System.out.println("Enabled = " + headline.isEnabled());
-
-            page.locator("#resumeHeadlineTxt")
-                    .fill("Testing ho rhi h bhut bhayankar");
-//            page.locator("#resumeHeadlineTxt")
-//                    .fill("Software Developer with expertise in backend development, skilled in Java Spring,Node.js, MongoDB, REST APIs, and algorithms, enhancing productivity and engagement through innovative solutions.Software Development,Software Design,Software Debugging. Senior Software Engineer with expertise in Java, Spring Boot, Microservices, Kafka, Redis and distributed systems.");
-
-            page.locator("button.btn-dark-ot[type='submit']")
-                    .click();
-
-            Thread.sleep(5000);
-
-            System.out.println("12. Closing browser");
-
+            log.info("Closing browser");
             browser.close();
-
-            System.out.println("13. Browser closed successfully");
+            log.info("Browser closed successfully");
 
         } catch (Exception e) {
-            System.out.println("ERROR OCCURRED");
-            e.printStackTrace();
+            log.error("Browser automation failed", e);
         }
     }
 }
