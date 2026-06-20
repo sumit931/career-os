@@ -1,5 +1,6 @@
 package io.careeros.coldemailer.service;
 
+import io.careeros.coldemailer.dto.response.GmailMessageResponse;
 import io.careeros.coldemailer.dto.response.GmailSendResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -16,12 +17,22 @@ import org.springframework.web.client.RestClient;
 public class GmailService {
 
   private static final String GMAIL_SEND_URL = "https://gmail.googleapis.com/gmail/v1/users/me/messages/send";
+  private static final String GMAIL_MESSAGE_URL = "https://gmail.googleapis.com/gmail/v1/users/me/messages/";
 
   private final RestClient googleRestClient;
 
   public GmailSendResponse sendEmail(String accessToken, String from, String to, String subject, String body) {
     String raw = buildRfc2822Email(from, to, subject, body);
     return post(accessToken, Map.of("raw", raw));
+  }
+
+  public String fetchRfc2822MessageId(String accessToken, String messageId) {
+    GmailMessageResponse response = googleRestClient.get()
+        .uri(GMAIL_MESSAGE_URL + messageId + "?format=metadata&metadataHeaders=Message-ID")
+        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+        .retrieve()
+        .body(GmailMessageResponse.class);
+    return response.rfc2822MessageId();
   }
 
   public GmailSendResponse sendFollowup(String accessToken, String from, String to, String subject,
@@ -55,12 +66,11 @@ public class GmailService {
 
   private String buildRfc2822Reply(String from, String to, String subject, String body, String rootMessageId) {
     String replySubject = subject.startsWith("Re: ") ? subject : "Re: " + subject;
-    String messageIdHeader = "<" + rootMessageId + ">";
     String email = "From: " + from + "\r\n"
         + "To: " + to + "\r\n"
         + "Subject: " + replySubject + "\r\n"
-        + "In-Reply-To: " + messageIdHeader + "\r\n"
-        + "References: " + messageIdHeader + "\r\n"
+        + "In-Reply-To: " + rootMessageId + "\r\n"
+        + "References: " + rootMessageId + "\r\n"
         + "Content-Type: text/plain; charset=utf-8\r\n"
         + "\r\n"
         + body;
