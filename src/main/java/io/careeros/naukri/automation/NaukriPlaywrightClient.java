@@ -22,47 +22,53 @@ public class NaukriPlaywrightClient {
         log.info("Browser launched, creating new page");
         Page page = browser.newPage();
 
-        page.navigate("https://www.naukri.com");
-        page.locator("#login_Layer").waitFor();
+        try {
+            page.navigate("https://www.naukri.com");
+            page.locator("#login_Layer").waitFor();
 
-        log.info("Navigated to Naukri — URL: {}, Title: {}", page.url(), page.title());
+            log.info("Navigated to Naukri — URL: {}, Title: {}", page.url(), page.title());
 
-        page.locator("#login_Layer").click();
-        log.debug("Login button clicked");
+            page.locator("#login_Layer").click();
+            log.debug("Login button clicked");
 
-        page.locator("input[placeholder='Enter your active Email ID / Username']").waitFor();
-        page.locator("input[placeholder='Enter your active Email ID / Username']").fill(email);
-        page.locator("input[placeholder='Enter your password']").fill(password);
-        log.debug("Credentials filled");
+            page.locator("input[placeholder='Enter your active Email ID / Username']").waitFor();
+            page.locator("input[placeholder='Enter your active Email ID / Username']").fill(email);
+            page.locator("input[placeholder='Enter your password']").fill(password);
+            log.debug("Credentials filled");
 
-        page.locator(".loginButton").click();
-        page.waitForLoadState(LoadState.DOMCONTENTLOADED);
-        log.info("Logged in successfully");
+            page.locator(".loginButton").click();
+            page.waitForLoadState(LoadState.DOMCONTENTLOADED);
+            log.info("Logged in successfully");
 
-        page.navigate("https://www.naukri.com/mnjuser/profile");
-        page.locator("#lazyResumeHead").waitFor();
-        log.debug("Profile page loaded, lazyResumeHead count: {}", page.locator("#lazyResumeHead").count());
+            page.navigate("https://www.naukri.com/mnjuser/profile");
+            page.locator("#lazyResumeHead").waitFor();
+            log.debug("Profile page loaded, lazyResumeHead count: {}", page.locator("#lazyResumeHead").count());
 
-        page.locator("#lazyResumeHead").locator("text=editOneTheme").click();
+            page.locator("#lazyResumeHead").locator("text=editOneTheme").click();
 
-        Locator headline = page.locator("#resumeHeadlineTxt");
-        headline.waitFor();
-        log.debug("Headline textarea — visible: {}, enabled: {}", headline.isVisible(), headline.isEnabled());
+            Locator headline = page.locator("#resumeHeadlineTxt");
+            headline.waitFor();
+            log.debug("Headline textarea — visible: {}, enabled: {}", headline.isVisible(), headline.isEnabled());
 
-        headline.fill(resumeHeadline);
+            headline.fill(resumeHeadline);
 
-        page.locator("button.btn-dark-ot[type='submit']").click();
-        page.waitForLoadState(LoadState.DOMCONTENTLOADED);
-        log.info("Resume headline updated");
+            page.locator("button.btn-dark-ot[type='submit']").click();
+            page.waitForLoadState(LoadState.DOMCONTENTLOADED);
+            log.info("Resume headline updated");
 
-        page.navigate("https://www.naukri.com/mnjuser/profile");
-        page.locator(".nI-gNb-drawer__icon").waitFor();
+            page.navigate("https://www.naukri.com/mnjuser/profile");
+            page.locator(".nI-gNb-drawer__icon").waitFor();
 
-        page.locator(".nI-gNb-drawer__icon").click();
-        page.getByText("Logout").waitFor();
-        page.getByText("Logout").click();
-        page.waitForLoadState(LoadState.DOMCONTENTLOADED);
-        log.info("Logged out successfully");
+            page.locator(".nI-gNb-drawer__icon").click();
+            page.getByText("Logout").waitFor();
+            page.getByText("Logout").click();
+            page.waitForLoadState(LoadState.DOMCONTENTLOADED);
+            log.info("Logged out successfully");
+        } catch (Exception e) {
+            log.error("Automation failed for email: {} — cleaning up page", email, e);
+        } finally {
+            page.close();
+        }
     }
 
 
@@ -89,8 +95,12 @@ public class NaukriPlaywrightClient {
                     profileDetail.setChangeHeadline(true);
                     resumeHeadline = profileDetail.getHeadline2();
                 }
+                try {
+                    processBrowser(browser, email, password, resumeHeadline);
+                } catch (Exception e) {
+                    log.error("Skipping profile {} due to error", email, e);
+                }
                 naukriProfileUpdateRepository.save(profileDetail);
-                processBrowser(browser, email, password, resumeHeadline);
             }
 
             log.info("Closing browser");

@@ -1,6 +1,5 @@
 package io.careeros.naukri.controller;
 
-import com.sun.net.httpserver.Authenticator;
 import io.careeros.naukri.dto.Request.CreateNaukriRequest;
 import io.careeros.naukri.dto.Request.UpdateNaukriRequest;
 import io.careeros.naukri.model.NaukriProfileDetail;
@@ -11,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 
 @RestController
@@ -43,7 +41,7 @@ public class NaukriController {
     }
 
     @GetMapping("/trigger")
-    public void TriggerUpdateFlow(){
+    public void triggerUpdateFlow(){
         naukriService.triggerUpdateFlow();
     }
 
