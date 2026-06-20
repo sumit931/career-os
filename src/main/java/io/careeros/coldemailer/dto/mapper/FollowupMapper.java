@@ -5,18 +5,20 @@ import io.careeros.coldemailer.dto.response.FollowupResponse;
 import io.careeros.coldemailer.entity.Campaign;
 import io.careeros.coldemailer.entity.Followup;
 import io.careeros.coldemailer.enums.FollowupStatus;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class FollowupMapper {
 
   private FollowupMapper() {}
 
-  public static Followup toEntity(Campaign campaign, String body, int sequenceNumber) {
+  public static Followup toEntity(Campaign campaign, String body, int sequenceNumber, LocalDateTime scheduledAt) {
     Followup followup = new Followup();
     followup.setCampaign(campaign);
     followup.setBody(body);
     followup.setSequenceNumber(sequenceNumber);
     followup.setStatus(FollowupStatus.PENDING);
+    followup.setScheduledAt(scheduledAt);
     return followup;
   }
 
@@ -25,7 +27,8 @@ public class FollowupMapper {
         followup.getId(),
         followup.getSequenceNumber(),
         followup.getBody(),
-        followup.getStatus()
+        followup.getStatus(),
+        followup.getScheduledAt()
     );
   }
 
